@@ -92,7 +92,11 @@ server <- function(input, output) {
             toString(input$caption)
         })
         output$value1 <- renderText({
-            toString(string_list()[1,1])
+            tryCatch({
+                toString(string_list()[1,1])}
+                ,error = function(err) 
+                {print(paste("Prediction not available"))
+            })
         })
     })
 }
