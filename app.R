@@ -7,8 +7,9 @@ library(gsubfn)
 library(RWeka)
 library(ggplot2)
 
-#file <- readRDS(file="./cleanfile")
-file <- readRDS(gzcon(url("https://github.com/dhyoon1112/datasciencecapstone/blob/main/cleanfile.rds?raw=true")))
+file1 <- readRDS(gzcon(url("https://github.com/dhyoon1112/datasciencecapstone/blob/main/cleanfile_327259.rds?raw=true")))
+file2 <- readRDS(gzcon(url("https://github.com/dhyoon1112/datasciencecapstone/blob/main/cleanfile_400002.rds?raw=true")))
+file <- c(file1,file2)
 
 list_vectors <- function(x,y) {
     
