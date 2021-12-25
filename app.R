@@ -24,7 +24,7 @@ list_vectors <- function(x,y) {
     #x is the string to search for
     for (i in 1:length(bnt_file)) {
         #Retrieve the starting position of the argument (string)
-        str_start <- regexpr(paste("^",x), bnt_file[i], ignore.case=TRUE)[1]
+        str_start <- regexpr(x, bnt_file[i], ignore.case=TRUE)[1]
         
         #Retrieve the total length of the argument
         str_end <- nchar(bnt_file[i])
