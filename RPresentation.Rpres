@@ -1,0 +1,107 @@
+Word Predictor
+========================================================
+author: Daniel Yoon
+date: 12/23/2021
+autosize: true
+
+Word Predictor by Dan Y
+========================================================
+Welcome! I will walk you through my application and its uses. The main points we will cover are
+
+- The Algorithm Code
+- The UI Application Code
+- The UI Application
+- User Experience
+
+
+Algorithm Code
+========================================================
+The algorithm identifies lines with the pattern in them, and then uses a tokenizer to identify the most common ones.
+```{r algorithm, echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE, width=100}
+    corpus <- VCorpus(VectorSource(bnt_file))
+    Tokenizer <- function(x) NGramTokenizer(x, Weka_control(min = y[1] + 1, max = y[1] + 1))
+    Matrix <- TermDocumentMatrix(corpus, control = list(tokenize = Tokenizer))
+    Corpus <- findFreqTerms(Matrix, lowfreq = 10)
+    CorpusCount <- rowSums(as.matrix(Matrix[Corpus,]))
+    CorpusCount <- sort(CorpusCount, decreasing=TRUE)
+    CorpusCount <- na.omit(CorpusCount[1:10])
+    CorpusCount <- data.frame(text = names(CorpusCount), frequency = CorpusCount)
+    predictedword <- " "
+    CorpusCount <- cbind.data.frame(CorpusCount,predictedword)
+    for (i in 1:nrow(CorpusCount)){
+        CorpusCount[i,3] <- tail(strsplit(CorpusCount[i,1],split=" ")[[1]],1)
+```
+
+UI Application Code - UI
+========================================================
+The UI code takes the input from the user, runs the algorithm code from earlier, and outputs the results.
+```{r ui, echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE, width=100}
+# Define UI for application that draws a histogram
+header <- dashboardHeader(title = "What is the Next Word?",
+                          titleWidth = 600)
+sidebar <- dashboardSidebar(
+    sidebarMenu(
+        textInput("caption", "Type in a phrase:", value = "input text here")
+    )
+)
+body <- dashboardBody(
+    
+    h2("You typed: "),
+    textOutput("inputvalue"),
+    h2("and your possible phrases with the predicted words are... "),
+    h3("Please allow a minute for the algorithm to run."),
+    textOutput("value1")    
+)
+ui <- dashboardPage(header,
+                    sidebar,
+                    body
+)
+```
+
+UI Application Code - Server
+========================================================
+The Server Code computes the algorithm for the UI section
+```{r server, echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+    
+    observe({
+        #argument for shiny app later on
+        x_length <- sapply(strsplit(input$caption," "), length)
+        print("breakpoint1")
+        
+        # #Retrieve the list of vectors with the argument string
+        string_list <- reactive({list_vectors(input$caption, x_length)})
+        print("breakpoint2")
+        
+        output$inputvalue <- renderText({
+            toString(input$caption)
+        })
+        output$value1 <- renderText({
+            tryCatch({toString(string_list()[1,1])}
+                     ,error = function(err) 
+                     {print(paste("Prediction not available"))
+                    })        })     }) }
+# Run the application 
+shinyApp(ui = ui, server = server)
+```
+
+
+UI Application
+========================================================
+The application can be found here: 
+
+1. Enter your phrase in the text box on the left
+2. Wait for the algorithm to process your phrase
+3. It will output your phrase along with the next word
+4. Discover what your next word will be!
+
+
+Experience
+========================================================
+This application can work great with typing applications. It can be used to...
+
+1. Auto-write sentences for users simply based on what they enter. 
+2. Used for mobile apps and online text editors
+3. Teach proper grammar and spelling
+4. Learn to write sentences more eloquently.
